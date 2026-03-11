@@ -1,0 +1,46 @@
+# 科幻空间网站 - robots.txt
+# 配置日期: 2026-03-11
+# 用途: 防止恶意爬虫，保护网站安全
+
+# 允许所有搜索引擎访问
+User-agent: *
+Allow: /
+
+# 禁止爬取敏感目录
+Disallow: /logs/
+Disallow: /config/
+Disallow: /.git/
+Disallow: /backup/
+
+# 禁止爬取测试文件
+Disallow: /*test*
+Disallow: /*debug*
+Disallow: /*temp*
+
+# 禁止爬取备份文件
+Disallow: /*.backup
+Disallow: /*.bak
+Disallow: /*.old
+
+# 禁止爬取系统文件
+Disallow: /*.log
+Disallow: /*.env
+Disallow: /*.config
+
+# 禁止爬取API接口（如果有）
+Disallow: /api/
+
+# 禁止爬取管理页面（如果有）
+Disallow: /admin/
+Disallow: /administrator/
+Disallow: /manage/
+
+# 禁止爬取登录页面（如果有）
+Disallow: /login/
+Disallow: /signin/
+
+# 搜索引擎爬取延迟（防止过载）
+Crawl-delay: 1
+
+# 网站地图位置
+Sitemap: https://xichengjixie.github.io/sitemap.xml
