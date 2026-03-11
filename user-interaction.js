@@ -33,7 +33,7 @@ class UserInteraction {
                     type: 'image',
                     dataUrl: e.target.result,
                     description: description,
-                    timestamp: new Date().toLocaleString(),
+                    timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     userName: this.getUserName()
                 };
                 this.data.images.unshift(imageData);
@@ -67,7 +67,7 @@ class UserInteraction {
                         dataUrl: e.target.result,
                         description: description,
                         duration: video.duration,
-                        timestamp: new Date().toLocaleString(),
+                        timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                         userName: this.getUserName()
                     };
                     this.data.images.unshift(videoData);
@@ -93,7 +93,7 @@ class UserInteraction {
             id: Date.now(),
             content: content,
             userName: userName || this.getUserName(),
-            timestamp: new Date().toLocaleString()
+            timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
         this.data.comments.unshift(comment);
         this.saveData();
@@ -108,7 +108,7 @@ class UserInteraction {
             id: Date.now(),
             action: action,
             userName: this.getUserName(),
-            timestamp: new Date().toLocaleString()
+            timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
         this.data.footprints.unshift(footprint);
         // 只保留最近50条足迹
