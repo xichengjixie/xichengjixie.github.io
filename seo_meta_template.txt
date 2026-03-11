@@ -1,0 +1,34 @@
+<!-- SEO Meta Tags -->
+<meta name="description" content="科幻空间 - 探索未来科技，分享前沿科技视频、图片和学术研究。涵盖量子计算、人工智能、神经科学、基因编辑、纳米技术、暗物质等前沿科技领域。">
+<meta name="keywords" content="科幻空间, 科技探索, 量子计算, 人工智能, AI, 神经科学, 基因编辑, 纳米技术, 暗物质, 虫洞, 曲速引擎, 未来科技, 科幻视频, 科技论文">
+<meta name="author" content="科幻空间 TechSpace">
+<meta name="robots" content="index, follow">
+<meta name="googlebot" content="index, follow">
+<meta name="baidu-site-verification" content="">
+<meta name="google-site-verification" content="">
+
+<!-- Open Graph Meta Tags -->
+<meta property="og:title" content="科幻空间 - TechSpace | 探索未来科技">
+<meta property="og:description" content="探索未来科技，分享前沿科技视频、图片和学术研究。涵盖量子计算、人工智能、神经科学、基因编辑等前沿科技领域。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://xichengjixie.github.io">
+<meta property="og:image" content="https://xichengjixie.github.io/images/og-image.png">
+<meta property="og:site_name" content="科幻空间 TechSpace">
+<meta property="og:locale" content="zh_CN">
+
+<!-- Twitter Card Meta Tags -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="科幻空间 - TechSpace | 探索未来科技">
+<meta name="twitter:description" content="探索未来科技，分享前沿科技视频、图片和学术研究。">
+<meta name="twitter:image" content="https://xichengjixie.github.io/images/twitter-card.png">
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://xichengjixie.github.io">
+
+<!-- Favicon -->
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+
+<!-- Additional SEO -->
+<meta name="theme-color" content="#0a0e27">
+<meta name="msapplication-TileColor" content="#0a0e27">
