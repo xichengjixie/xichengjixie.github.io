@@ -554,6 +554,31 @@
             </div>
         </div>
 
+        <!-- 动态安全令牌状态 -->
+        <div class="content-section" style="background: rgba(0, 255, 0, 0.05); border: 2px solid rgba(0, 255, 0, 0.3); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);">
+            <h2 class="section-title" style="color: #00ff00; text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);">🔐 动态安全令牌</h2>
+            <div id="token-status" style="text-align: center; padding: 20px;">
+                <div style="margin-bottom: 15px;">
+                    <span style="color: #888; font-size: 0.9em;">当前令牌：</span>
+                    <span id="current-token" style="color: #00ff00; font-family: monospace; font-size: 1.2em; font-weight: bold; margin-left: 10px;">加载中...</span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <span style="color: #888; font-size: 0.9em;">下次轮换：</span>
+                    <span id="token-countdown" style="color: #ffff00; font-family: monospace; font-size: 1.5em; font-weight: bold; margin-left: 10px;">15</span>
+                    <span style="color: #ffff00; margin-left: 5px;">秒</span>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <span style="color: #888; font-size: 0.9em;">历史令牌数：</span>
+                    <span id="token-history" style="color: #00ffff; font-family: monospace; font-size: 1.2em; font-weight: bold; margin-left: 10px;">0</span>
+                </div>
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0, 255, 0, 0.1); border-radius: 10px;">
+                    <p style="color: #00ff00; font-size: 0.9em; margin: 0;">
+                        ✅ 动态令牌每15秒自动轮换，所有操作均受令牌保护
+                    </p>
+                </div>
+            </div>
+        </div>
+
         <div class="content-section">
             <h2 class="section-title">相关图片</h2>
             <div class="image-grid">
@@ -597,6 +622,50 @@
             cards.forEach((card, index) => {
                 card.style.animationDelay = `${index * 0.1}s`;
             });
+
+            // 动态令牌状态更新
+            function updateTokenStatus() {
+                if (window.security && window.security.dynamicToken) {
+                    const tokenDisplay = window.security.dynamicToken.getTokenDisplay();
+                    const tokenElement = document.getElementById('current-token');
+                    const countdownElement = document.getElementById('token-countdown');
+                    const historyElement = document.getElementById('token-history');
+
+                    if (tokenElement) tokenElement.textContent = tokenDisplay.token;
+                    if (countdownElement) countdownElement.textContent = tokenDisplay.nextRotation;
+                    if (historyElement) historyElement.textContent = tokenDisplay.historyCount;
+                }
+            }
+
+            // 每秒更新一次倒计时
+            setInterval(updateTokenStatus, 1000);
+
+            // 监听令牌轮换事件
+            window.addEventListener('dynamicTokenRotated', () => {
+                updateTokenStatus();
+                // 闪烁效果
+                const tokenElement = document.getElementById('current-token');
+                if (tokenElement) {
+                    tokenElement.style.animation = 'none';
+                    setTimeout(() => {
+                        tokenElement.style.animation = 'tokenUpdate 0.5s ease';
+                    }, 10);
+                }
+            });
+
+            // 添加令牌更新动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes tokenUpdate {
+                    0% { transform: scale(1); }
+                    50% { transform: scale(1.1); color: #ffff00; }
+                    100% { transform: scale(1); }
+                }
+            `;
+            document.head.appendChild(style);
+
+            // 初始更新
+            setTimeout(updateTokenStatus, 1000);
         });
     </script>
 <script src="comments-utterances.js"></script>

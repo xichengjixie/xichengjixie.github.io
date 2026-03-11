@@ -49,8 +49,292 @@ const SECURITY_CONFIG = {
     LOGIN_LIMIT: {
         maxAttempts: 5,
         lockoutTime: 15 * 60 * 1000, // 15分钟
+    },
+    
+    // 动态令牌配置
+    DYNAMIC_TOKEN: {
+        rotationInterval: 15000,  // 令牌轮换间隔：15秒
+        tokenLength: 64,          // 令牌长度
+        historySize: 4,           // 保留的历史令牌数量（用于时间窗口验证）
+        gracePeriod: 30000        // 宽限期：30秒（允许使用最近的令牌）
     }
 };
+
+// 动态令牌系统
+class DynamicTokenSystem {
+    constructor() {
+        this.storageKey = 'dynamic_tokens';
+        this.currentToken = null;
+        this.tokenHistory = [];
+        this.rotationTimer = null;
+        this.lastRotation = 0;
+        this.init();
+    }
+
+    init() {
+        // 加载已保存的令牌
+        this.loadTokens();
+        
+        // 立即生成新令牌
+        this.rotateToken();
+        
+        // 启动定时轮换
+        this.startRotation();
+    }
+
+    // 加载已保存的令牌
+    loadTokens() {
+        try {
+            const stored = localStorage.getItem(this.storageKey);
+            if (stored) {
+                const data = JSON.parse(stored);
+                this.currentToken = data.currentToken;
+                this.tokenHistory = data.tokenHistory || [];
+                this.lastRotation = data.lastRotation || 0;
+                
+                // 检查令牌是否过期
+                const now = Date.now();
+                const age = now - this.lastRotation;
+                if (age > SECURITY_CONFIG.DYNAMIC_TOKEN.gracePeriod) {
+                    // 令牌过期，重新生成
+                    this.rotateToken();
+                }
+            }
+        } catch (e) {
+            console.error('加载动态令牌失败:', e);
+            this.rotateToken();
+        }
+    }
+
+    // 保存令牌
+    saveTokens() {
+        try {
+            const data = {
+                currentToken: this.currentToken,
+                tokenHistory: this.tokenHistory,
+                lastRotation: this.lastRotation
+            };
+            localStorage.setItem(this.storageKey, JSON.stringify(data));
+        } catch (e) {
+            console.error('保存动态令牌失败:', e);
+        }
+    }
+
+    // 生成安全的随机令牌
+    generateToken() {
+        const array = new Uint8Array(SECURITY_CONFIG.DYNAMIC_TOKEN.tokenLength);
+        crypto.getRandomValues(array);
+        
+        // 使用当前时间戳和随机数生成令牌
+        const timestamp = Date.now().toString(36);
+        const random = Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+        
+        // 添加校验码
+        const hash = this.hashToken(random + timestamp);
+        
+        return `${timestamp}-${random.substring(0, 32)}-${hash}`;
+    }
+
+    // 计算令牌哈希
+    hashToken(token) {
+        let hash = 0;
+        for (let i = 0; i < token.length; i++) {
+            const char = token.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash;
+        }
+        return Math.abs(hash).toString(16).padStart(8, '0');
+    }
+
+    // 轮换令牌
+    rotateToken() {
+        const now = Date.now();
+        
+        // 将当前令牌移入历史
+        if (this.currentToken) {
+            this.tokenHistory.unshift({
+                token: this.currentToken,
+                createdAt: this.lastRotation
+            });
+            
+            // 限制历史大小
+            const maxHistory = SECURITY_CONFIG.DYNAMIC_TOKEN.historySize;
+            if (this.tokenHistory.length > maxHistory) {
+                this.tokenHistory = this.tokenHistory.slice(0, maxHistory);
+            }
+        }
+        
+        // 生成新令牌
+        this.currentToken = this.generateToken();
+        this.lastRotation = now;
+        
+        // 保存
+        this.saveTokens();
+        
+        // 记录日志
+        if (window.security && window.security.audit) {
+            window.security.audit.logEvent({
+                type: 'token_rotation',
+                severity: 'low',
+                details: `动态令牌已轮换，有效期至: ${new Date(now + SECURITY_CONFIG.DYNAMIC_TOKEN.gracePeriod).toLocaleString()}`
+            });
+        }
+        
+        // 触发自定义事件
+        window.dispatchEvent(new CustomEvent('dynamicTokenRotated', {
+            detail: {
+                token: this.currentToken,
+                timestamp: now
+            }
+        }));
+    }
+
+    // 启动定时轮换
+    startRotation() {
+        if (this.rotationTimer) {
+            clearInterval(this.rotationTimer);
+        }
+        
+        this.rotationTimer = setInterval(() => {
+            this.rotateToken();
+        }, SECURITY_CONFIG.DYNAMIC_TOKEN.rotationInterval);
+    }
+
+    // 停止轮换
+    stopRotation() {
+        if (this.rotationTimer) {
+            clearInterval(this.rotationTimer);
+            this.rotationTimer = null;
+        }
+    }
+
+    // 获取当前令牌
+    getCurrentToken() {
+        return this.currentToken;
+    }
+
+    // 获取令牌显示（用于调试）
+    getTokenDisplay() {
+        const now = Date.now();
+        const remaining = SECURITY_CONFIG.DYNAMIC_TOKEN.rotationInterval - (now % SECURITY_CONFIG.DYNAMIC_TOKEN.rotationInterval);
+        const secondsUntilRotation = Math.ceil(remaining / 1000);
+        
+        return {
+            token: this.currentToken.substring(0, 16) + '...',
+            fullToken: this.currentToken,
+            historyCount: this.tokenHistory.length,
+            nextRotation: secondsUntilRotation + '秒',
+            createdAt: new Date(this.lastRotation).toLocaleString()
+        };
+    }
+
+    // 验证令牌
+    validateToken(token) {
+        // 检查当前令牌
+        if (token === this.currentToken) {
+            return { valid: true, status: 'current' };
+        }
+        
+        // 检查历史令牌（在宽限期内）
+        const now = Date.now();
+        for (const history of this.tokenHistory) {
+            if (history.token === token) {
+                const age = now - history.createdAt;
+                if (age <= SECURITY_CONFIG.DYNAMIC_TOKEN.gracePeriod) {
+                    return { valid: true, status: 'expired' };
+                }
+            }
+        }
+        
+        return { valid: false, status: 'invalid' };
+    }
+
+    // 生成请求签名
+    signRequest(action, data = {}) {
+        const token = this.getCurrentToken();
+        const timestamp = Date.now();
+        const nonce = this.generateNonce();
+        
+        // 构建签名数据
+        const signData = {
+            action: action,
+            timestamp: timestamp,
+            nonce: nonce,
+            data: data,
+            token: token
+        };
+        
+        // 生成签名
+        const signature = this.hashToken(JSON.stringify(signData));
+        
+        return {
+            token: token,
+            timestamp: timestamp,
+            nonce: nonce,
+            signature: signature,
+            action: action
+        };
+    }
+
+    // 生成随机数
+    generateNonce() {
+        const array = new Uint8Array(16);
+        crypto.getRandomValues(array);
+        return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    }
+
+    // 验证请求签名
+    verifyRequest(signatureData, action) {
+        if (!signatureData || typeof signatureData !== 'object') {
+            return { valid: false, error: '无效的签名数据' };
+        }
+        
+        const { token, timestamp, nonce, signature } = signatureData;
+        
+        // 验证令牌
+        const tokenValidation = this.validateToken(token);
+        if (!tokenValidation.valid) {
+            return { valid: false, error: '令牌无效或已过期' };
+        }
+        
+        // 验证时间戳（防止重放攻击）
+        const now = Date.now();
+        const timeDiff = Math.abs(now - timestamp);
+        if (timeDiff > SECURITY_CONFIG.DYNAMIC_TOKEN.gracePeriod) {
+            return { valid: false, error: '请求已过期' };
+        }
+        
+        // 验证操作类型
+        if (signatureData.action !== action) {
+            return { valid: false, error: '操作类型不匹配' };
+        }
+        
+        // 验证签名
+        const signData = {
+            action: action,
+            timestamp: timestamp,
+            nonce: nonce,
+            data: signatureData.data || {},
+            token: token
+        };
+        const expectedSignature = this.hashToken(JSON.stringify(signData));
+        
+        if (signature !== expectedSignature) {
+            return { valid: false, error: '签名验证失败' };
+        }
+        
+        return { valid: true, status: tokenValidation.status };
+    }
+
+    // 销毁令牌系统
+    destroy() {
+        this.stopRotation();
+        localStorage.removeItem(this.storageKey);
+        this.currentToken = null;
+        this.tokenHistory = [];
+        this.lastRotation = 0;
+    }
+}
 
 // XSS防护模块
 class XSSProtection {
@@ -414,6 +698,7 @@ class SecurityInitializer {
     constructor() {
         this.audit = new SecurityAudit();
         this.rateLimiter = new RateLimiter();
+        this.dynamicToken = new DynamicTokenSystem();
         this.init();
     }
 
@@ -434,7 +719,16 @@ class SecurityInitializer {
         this.audit.logEvent({
             type: 'security_init',
             severity: 'low',
-            details: '安全模块初始化完成'
+            details: '安全模块初始化完成（包含动态令牌系统）'
+        });
+        
+        // 监听令牌轮换事件
+        window.addEventListener('dynamicTokenRotated', (event) => {
+            this.audit.logEvent({
+                type: 'token_rotation_event',
+                severity: 'low',
+                details: `动态令牌已更新: ${event.detail.token.substring(0, 16)}...`
+            });
         });
     }
 
@@ -516,6 +810,7 @@ window.InputValidator = InputValidator;
 window.SecurityAudit = SecurityAudit;
 window.RateLimiter = RateLimiter;
 window.EncryptionUtils = EncryptionUtils;
+window.DynamicTokenSystem = DynamicTokenSystem;
 window.SecurityInitializer = SecurityInitializer;
 
 // 页面加载时自动初始化安全模块

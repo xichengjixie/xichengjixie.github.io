@@ -7,6 +7,7 @@ class UserInteraction {
         this.storageKey = `tech_space_${pageId}_data`;
         this.securityAudit = window.security ? window.security.audit : null;
         this.rateLimiter = window.security ? window.security.rateLimiter : null;
+        this.dynamicToken = window.security ? window.security.dynamicToken : null;
         this.loadData();
     }
 
@@ -113,6 +114,23 @@ class UserInteraction {
 
     // 处理图片上传
     processImageUpload(file, description, resolve, reject) {
+        // 验证动态令牌
+        if (this.dynamicToken) {
+            const currentToken = this.dynamicToken.getCurrentToken();
+            // 在实际应用中，这里应该验证用户提交的令牌
+            // 为了演示，我们自动生成并验证签名
+            const signature = this.dynamicToken.signRequest('upload_image', { 
+                fileName: file.name,
+                fileSize: file.size 
+            });
+            
+            if (!this.dynamicToken.verifyRequest(signature, 'upload_image').valid) {
+                alert('安全验证失败，请刷新页面重试');
+                reject(new Error('令牌验证失败'));
+                return;
+            }
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
@@ -135,7 +153,8 @@ class UserInteraction {
                     description: safeDescription,
                     timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     userName: this.getUserName(),
-                    fileName: window.FileUploadSecurity ? window.FileUploadSecurity.generateSafeFileName(file.name) : file.name
+                    fileName: window.FileUploadSecurity ? window.FileUploadSecurity.generateSafeFileName(file.name) : file.name,
+                    token: this.dynamicToken ? this.dynamicToken.getCurrentToken().substring(0, 16) : 'N/A'
                 };
                 this.data.images.unshift(imageData);
                 this.saveData();
@@ -146,7 +165,7 @@ class UserInteraction {
                     this.securityAudit.logEvent({
                         type: 'file_upload',
                         severity: 'low',
-                        details: `用户上传图片: ${imageData.fileName}`
+                        details: `用户上传图片: ${imageData.fileName} (令牌: ${imageData.token}...)`
                     });
                 }
                 
@@ -237,6 +256,22 @@ class UserInteraction {
 
     // 处理视频上传
     processVideoUpload(file, description, duration, resolve, reject) {
+        // 验证动态令牌
+        if (this.dynamicToken) {
+            const currentToken = this.dynamicToken.getCurrentToken();
+            const signature = this.dynamicToken.signRequest('upload_video', { 
+                fileName: file.name,
+                fileSize: file.size,
+                duration: duration
+            });
+            
+            if (!this.dynamicToken.verifyRequest(signature, 'upload_video').valid) {
+                alert('安全验证失败，请刷新页面重试');
+                reject(new Error('令牌验证失败'));
+                return;
+            }
+        }
+
         const reader = new FileReader();
         reader.onload = (e) => {
             try {
@@ -260,7 +295,8 @@ class UserInteraction {
                     duration: duration,
                     timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
                     userName: this.getUserName(),
-                    fileName: window.FileUploadSecurity ? window.FileUploadSecurity.generateSafeFileName(file.name) : file.name
+                    fileName: window.FileUploadSecurity ? window.FileUploadSecurity.generateSafeFileName(file.name) : file.name,
+                    token: this.dynamicToken ? this.dynamicToken.getCurrentToken().substring(0, 16) : 'N/A'
                 };
                 this.data.images.unshift(videoData);
                 this.saveData();
@@ -271,7 +307,7 @@ class UserInteraction {
                     this.securityAudit.logEvent({
                         type: 'file_upload',
                         severity: 'low',
-                        details: `用户上传视频: ${videoData.fileName} (${duration.toFixed(1)}秒)`
+                        details: `用户上传视频: ${videoData.fileName} (${duration.toFixed(1)}秒) (令牌: ${videoData.token}...)`
                     });
                 }
                 
@@ -312,12 +348,25 @@ class UserInteraction {
             return null;
         }
 
+        // 验证动态令牌
+        if (this.dynamicToken) {
+            const signature = this.dynamicToken.signRequest('add_comment', { 
+                contentLength: content.length
+            });
+            
+            if (!this.dynamicToken.verifyRequest(signature, 'add_comment').valid) {
+                alert('安全验证失败，请刷新页面重试');
+                return null;
+            }
+        }
+
         try {
             const comment = {
                 id: Date.now(),
                 content: validation.sanitized,
                 userName: userName || this.getUserName(),
-                timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' })
+                timestamp: new Date().toLocaleString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+                token: this.dynamicToken ? this.dynamicToken.getCurrentToken().substring(0, 16) : 'N/A'
             };
             this.data.comments.unshift(comment);
             this.saveData();
@@ -328,7 +377,7 @@ class UserInteraction {
                 this.securityAudit.logEvent({
                     type: 'comment_posted',
                     severity: 'low',
-                    details: `用户发表评论: ${comment.content.substring(0, 50)}...`
+                    details: `用户发表评论: ${comment.content.substring(0, 50)}... (令牌: ${comment.token}...)`
                 });
             }
             
