@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>基因工程 - 科技空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        .page-title {
+            font-size: 3em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #11998e, #38ef7d, #11998e);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(17, 153, 142, 0.5);
+            padding: 20px;
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(17, 153, 142, 0.2);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #11998e;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(17, 153, 142, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-content {
+            line-height: 1.8;
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: rgba(17, 153, 142, 0.1);
+            border-left: 4px solid #11998e;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tech-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(17, 153, 142, 0.08);
+            border: 2px solid rgba(17, 153, 142, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(17, 153, 142, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #38ef7d;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 用户交互区域样式 */
+        .user-interaction-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: rgba(17, 153, 142, 0.1);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 25px;
+            color: #11998e;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(17, 153, 142, 0.3);
+            border-color: rgba(17, 153, 142, 0.8);
+            box-shadow: 0 0 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            background: rgba(17, 153, 142, 0.05);
+            border: 2px dashed rgba(17, 153, 142, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(17, 153, 142, 0.8);
+            background: rgba(17, 153, 142, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(17, 153, 142, 0.6);
+        }
+
+        .image-description-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background: rgba(17, 153, 142, 0.1);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .image-description-input::placeholder {
+            color: #888;
+        }
+
+        .image-description-input:focus {
+            outline: none;
+            border-color: rgba(17, 153, 142, 0.8);
+            box-shadow: 0 0 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .user-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-image-card {
+            background: rgba(17, 153, 142, 0.1);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-image-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(17, 153, 142, 0.8);
+            box-shadow: 0 0 20px rgba(17, 153, 142, 0.4);
+        }
+
+        .user-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-description {
+            color: #11998e;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .image-meta {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .comment-input-area {
+            background: rgba(17, 153, 142, 0.05);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: rgba(17, 153, 142, 0.1);
+            border: 2px solid rgba(17, 153, 142, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .comment-textarea::placeholder {
+            color: #888;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: rgba(17, 153, 142, 0.8);
+            box-shadow: 0 0 15px rgba(17, 153, 142, 0.3);
+        }
+
+        .comment-submit-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #11998e, #38ef7d);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(17, 153, 142, 0.3);
+        }
+
+        .comment-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(17, 153, 142, 0.6);
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: rgba(17, 153, 142, 0.08);
+            border: 2px solid rgba(17, 153, 142, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: rgba(17, 153, 142, 0.6);
+            box-shadow: 0 5px 15px rgba(17, 153, 142, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(17, 153, 142, 0.2);
+        }
+
+        .comment-author {
+            color: #11998e;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .footprints-container {
+            margin-top: 20px;
+        }
+
+        .footprint-item {
+            background: rgba(17, 153, 142, 0.05);
+            border: 2px solid rgba(17, 153, 142, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footprint-item:hover {
+            border-color: rgba(17, 153, 142, 0.6);
+            background: rgba(17, 153, 142, 0.1);
+        }
+
+        .footprint-action {
+            color: #11998e;
+            font-weight: 600;
+        }
+
+        .footprint-user {
+            color: #e0e0e0;
+        }
+
+        .footprint-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .interaction-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+
+        <h1 class="page-title">🧬 基因工程</h1>
+
+        <div class="content-section">
+            <h2 class="section-title">什么是基因工程？</h2>
+            <div class="section-content">
+                <p>基因工程是通过人工手段对生物体的基因组进行修饰和改造的技术。CRISPR-Cas9基因编辑技术是目前最先进的基因编辑工具，能够高效率地进行定点基因组编辑，为遗传病治疗和农业改良提供新方案。</p>
+
+                <div class="highlight-box">
+                    <strong>技术革命：</strong>CRISPR就像用文书软件修改错误一样简单：找到错字（发现突变基因）、删除错字（剪下突变基因）、补上正确的字（贴上正确基因）。彻底根治基因缺陷成为可能。
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">核心技术</h2>
+            <div class="section-content">
+                <p><strong>1. CRISPR-Cas9系统</strong></p>
+                <p>CRISPR是存在于细菌、古菌中的一种基因，能够识别并抵抗病毒攻击。科学家将自然CRISPR蛋白质重新想象为操纵基因组的工具，可以编辑任何基因组序列。</p>
+
+                <p><strong>2. 基因编辑机制</strong></p>
+                <p>CRISPR-Cas9基因编辑技术是一种简单而有效的机制，通过破坏、替换或校正致病性基因突变，实现对内源基因功能的重新调控。</p>
+
+                <p><strong>3. 基因编辑治疗</strong></p>
+                <p>利用基因编辑技术治疗人类遗传性疾病，包括镰状细胞病、β地中海贫血等，目前已进入临床试验阶段。</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">应用领域</h2>
+            <div class="section-content">
+                <p>基因工程的应用：</p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">🏥 <strong>医学治疗</strong>：治疗遗传性疾病、癌症和传染病</li>
+                    <li style="margin-bottom: 15px;">🌾 <strong>农业改良</strong>：培育抗病虫害、高产量的作物品种</li>
+                    <li style="margin-bottom: 15px;">🔬 <strong>科学研究</strong>：基因功能研究、疾病模型构建</li>
+                    <li style="margin-bottom: 15px;">💊 <strong>药物开发</strong>：新药靶点发现、个性化医疗</li>
+                    <li style="margin-bottom: 15px;">🧫 <strong>生物制造</strong>：生产蛋白质、酶和其他生物分子</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">最新进展</h2>
+            <div class="section-content">
+                <p><strong>2024-2025年重大突破：</strong></p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">✅ CRISPR基因编辑疗法获得FDA批准用于治疗遗传病</li>
+                    <li style="margin-bottom: 15px;">✅ 利用CRISPR-Cas3治疗慢性尿路感染的研究取得进展</li>
+                    <li style="margin-bottom: 15px;">✅ 基因编辑技术在农业领域的应用加速推广</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">技术参数</h2>
+            <div class="tech-stats">
+                <div class="stat-card">
+                    <div class="stat-number">2012</div>
+                    <div class="stat-label">CRISPR发现年份</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">99%</div>
+                    <div class="stat-label">编辑准确率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">可治疗疾病</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">应用潜力</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">著名人物</h2>
+            <div class="scientists-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 25px;">
+                <!-- 科学家1 -->
+                <div class="scientist-card" style="background: rgba(17, 153, 142, 0.1); border: 2px solid rgba(17, 153, 142, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #11998e, #38ef7d); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🧬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #11998e; margin-bottom: 10px; font-size: 1.3em;">詹姆斯·沃森</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>DNA双螺旋发现者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1953年与克里克共同发现DNA双螺旋结构，被誉为"生命密码的解密者"。1962年获诺贝尔生理学或医学奖。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">诺贝尔奖</span>
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">DNA结构</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家2 -->
+                <div class="scientist-card" style="background: rgba(17, 153, 142, 0.1); border: 2px solid rgba(17, 153, 142, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #11998e, #38ef7d); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🔬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #11998e; margin-bottom: 10px; font-size: 1.3em;">弗朗西斯·克里克</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>DNA双螺旋发现者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">与沃森共同发现DNA双螺旋结构，这一发现奠定了分子生物学基础，开启了分子遗传学与生物科技的新纪元。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">诺贝尔奖</span>
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">分子生物学</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家3 -->
+                <div class="scientist-card" style="background: rgba(17, 153, 142, 0.1); border: 2px solid rgba(17, 153, 142, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #11998e, #38ef7d); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🧪
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #11998e; margin-bottom: 10px; font-size: 1.3em;">雅克·莫诺</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>基因调控机制</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">发现基因调控机制，提出操纵子模型，1965年获诺贝尔生理学或医学奖。开创了分子生物学的新时代。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">诺贝尔奖</span>
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">基因调控</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家4 -->
+                <div class="scientist-card" style="background: rgba(17, 153, 142, 0.1); border: 2px solid rgba(17, 153, 142, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #11998e, #38ef7d); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        ✂️
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #11998e; margin-bottom: 10px; font-size: 1.3em;">詹妮弗·杜德纳</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>CRISPR技术</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">CRISPR-Cas9基因编辑技术的主要开发者，2020年获诺贝尔化学奖。彻底改变了基因编辑领域。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">诺贝尔奖</span>
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">CRISPR</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家5 -->
+                <div class="scientist-card" style="background: rgba(17, 153, 142, 0.1); border: 2px solid rgba(17, 153, 142, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #11998e, #38ef7d); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🧫
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #11998e; margin-bottom: 10px; font-size: 1.3em;">埃马纽埃尔·沙尔庞捷</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>CRISPR技术</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">与杜德纳共同开发CRISPR-Cas9基因编辑技术，2020年获诺贝尔化学奖。开创了基因编辑治疗的新时代。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">诺贝尔奖</span>
+                            <span style="background: rgba(17, 153, 142, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #11998e;">基因编辑</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- 用户交互区域 -->
+        <div class="user-interaction-section">
+            <h2 class="section-title" style="text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);">互动空间</h2>
+            <div class="interaction-tabs">
+                <button class="tab-btn active" data-tab="images" style="font-size: 1.2em; padding: 12px 25px;">📷 分享内容</button>
+                <button class="tab-btn" data-tab="comments" style="font-size: 1.2em; padding: 12px 25px;">💬 评论交流</button>
+                <button class="tab-btn" data-tab="footprints" style="font-size: 1.2em; padding: 12px 25px;">👣 访问足迹</button>
+            </div>
+
+            <!-- 图片和视频分享标签页 -->
+            <div class="tab-content active" id="images-tab">
+                <div class="upload-area" style="background: rgba(0, 255, 255, 0.1); border: 3px solid rgba(0, 255, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);">
+                    <p style="color: #00ffff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);">✨ 欢迎留下你自己觉得你喜欢的视频和图片！</p>
+                    <p style="color: #a0ffff; margin-bottom: 25px; font-size: 1.2em;">💫 视频时长控制在15秒内，分享你的科幻灵感！</p>
+                    
+                    <input type="text" id="image-description" class="image-description-input" placeholder="描述你的视频或图片（可选）" style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(0, 255, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #00ffff; font-size: 1.1em;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <button class="upload-btn" id="upload-image-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">📤 上传图片</button>
+                        <button class="upload-btn" id="upload-video-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">🎬 上传视频</button>
+                    </div>
+                </div>
+                <div class="user-images-container" id="user-images-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 评论交流标签页 -->
+            <div class="tab-content" id="comments-tab">
+                <div class="comment-input-area" style="background: rgba(255, 0, 255, 0.1); border: 3px solid rgba(255, 0, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);">
+                    <p style="color: #ff00ff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);">💬 分享你的看法和见解</p>
+                    <textarea id="comment-input" class="comment-textarea" placeholder="写下你的评论..." style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(255, 0, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #ff00ff; font-size: 1.1em; min-height: 120px;"></textarea>
+                    <button class="comment-submit-btn" id="submit-comment-btn" style="width: 100%; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">💬 发表评论</button>
+                </div>
+                <div class="comments-container" id="user-comments-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 访问足迹标签页 -->
+            <div class="tab-content" id="footprints-tab">
+                <div class="footprints-container" id="user-footprints-container" style="background: rgba(255, 255, 0, 0.1); border: 3px solid rgba(255, 255, 0, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);"></div>
+            </div>
+        </div>
+<div class="content-section">
+            <h2 class="section-title">相关图片</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=400&h=300&fit=crop" alt="DNA结构" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">DNA双螺旋结构</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop" alt="基因编辑" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">基因编辑技术</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1579154204601-01588f351e67?w=400&h=300&fit=crop" alt="生物实验" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">生物实验</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=400&h=300&fit=crop" alt="细胞研究" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">细胞研究</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=400&h=300&fit=crop" alt="生物技术" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">生物技术</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1558346490-a72e53ae2d4f?w=400&h=300&fit=crop" alt="基因治疗" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">基因治疗</div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .scientist-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(17, 153, 142, 0.8);
+                box-shadow: 0 10px 30px rgba(17, 153, 142, 0.3);
+            }
+        </style>
+    </div>
+
+    <script src="user-interaction.js"></script>
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加active类到当前按钮和对应内容
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

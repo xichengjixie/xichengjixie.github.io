@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>暗物质 - 科技空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        .page-title {
+            font-size: 3em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #232526, #414345, #232526);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #ffffff;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-content {
+            line-height: 1.8;
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid #ffffff;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tech-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 用户交互区域样式 */
+        .user-interaction-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            color: #ffffff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #232526, #414345);
+            color: #00ffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        .image-description-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .image-description-input::placeholder {
+            color: #888;
+        }
+
+        .image-description-input:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .user-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-image-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-image-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+        }
+
+        .user-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-description {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .image-meta {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .comment-input-area {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .comment-textarea::placeholder {
+            color: #888;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .comment-submit-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #232526, #414345);
+            color: #00ffff;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .comment-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.6);
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .comment-author {
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .footprints-container {
+            margin-top: 20px;
+        }
+
+        .footprint-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footprint-item:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .footprint-action {
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .footprint-user {
+            color: #e0e0e0;
+        }
+
+        .footprint-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .interaction-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+
+        <h1 class="page-title">🌌 暗物质</h1>
+
+        <div class="content-section">
+            <h2 class="section-title">什么是暗物质？</h2>
+            <div class="section-content">
+                <p>暗物质是一种不可见的假设性物质，它不与电磁力产生作用，也就是不会吸收、反射或发出光。人们目前只能透过重力产生的效应推断其存在。根据宇宙学观测，暗物质占宇宙总能量的27%，而普通物质仅占5%。</p>
+
+                <div class="highlight-box">
+                    <strong>宇宙之谜：</strong>科学家推测，可见物质仅占整体宇宙质量的5%，剩下的约95%都是暗物质和暗能量。暗物质和暗能量被视为现代物理学和天文学的"两朵乌云"，是人类认识宇宙的最大谜团。
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">暗物质特性</h2>
+            <div class="section-content">
+                <p><strong>1. 不可见性</strong></p>
+                <p>暗物质不发光，也就是不发出电磁波，所以看不见。但与通常物质一样，暗物质有引力作用，这种引力效应让天文学家发现暗物质的存在。</p>
+
+                <p><strong>2. 引力作用</strong></p>
+                <p>除引力之外，暗物质与重子物质之间几乎没有任何相互作用。科学家通过观测星系旋转曲线、引力透镜效应等现象证实了暗物质的存在。</p>
+
+                <p><strong>3. 理论预测</strong></p>
+                <p>根据弦理论，暗物质可能位于更大的10维宇宙中，也许存在不止一种暗物质粒子。暗物质粒子相互碰撞并湮灭时，可能产生高能电子。</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">探测方法</h2>
+            <div class="section-content">
+                <p>暗物质探测的主要方法：</p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">🚀 <strong>空间探测</strong>：到空间去精确探测高能电子能谱，发现暗物质存在的蛛丝马迹</li>
+                    <li style="margin-bottom: 15px;">🌊 <strong>地下实验</strong>：在2400米地下探索宇宙暗物质之谜，避免宇宙射线干扰</li>
+                    <li style="margin-bottom: 15px;">🔭 <strong>天文观测</strong>：通过引力透镜、星系旋转曲线等间接探测</li>
+                    <li style="margin-bottom: 15px;">⚛️ <strong>粒子对撞</strong>：在大型强子对撞机中寻找暗物质粒子</li>
+                    <li style="margin-bottom: 15px;">📡 <strong>间接探测</strong>：观测暗物质湮灭产生的伽玛射线、正电子等</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">研究进展</h2>
+            <div class="section-content">
+                <p><strong>暗物质探测现状：</strong></p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">✅ 中国在2400米地下建立暗物质探测实验室</li>
+                    <li style="margin-bottom: 15px;">✅ "悟空"卫星等探测器取得重要观测数据</li>
+                    <li style="margin-bottom: 15px;">✅ 标准宇宙学模型成功解释几乎所有宇宙学观测</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">宇宙组成</h2>
+            <div class="tech-stats">
+                <div class="stat-card">
+                    <div class="stat-number">68%</div>
+                    <div class="stat-label">暗能量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">27%</div>
+                    <div class="stat-label">暗物质</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5%</div>
+                    <div class="stat-label">普通物质</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">?</div>
+                    <div class="stat-label">待解之谜</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">著名人物</h2>
+            <div class="scientists-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 25px;">
+                <!-- 科学家1 -->
+                <div class="scientist-card" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #ffffff, #a0a0a0); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🔭
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #ffffff; margin-bottom: 10px; font-size: 1.3em;">弗里茨·茨威基</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>暗物质概念提出者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1933年在观测后发座星系团时首次提出了暗物质的概念，开创了暗物质研究的先河。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">暗物质</span>
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">天文学</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家2 -->
+                <div class="scientist-card" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #ffffff, #a0a0a0); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        👩‍🔬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #ffffff; margin-bottom: 10px; font-size: 1.3em;">薇拉·鲁宾</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>暗物质之母</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1974年对星系转速的研究促成了暗物质的发现，提供了"无可辩驳的经验证据"，被誉为"暗物质之母"。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">暗物质之母</span>
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">星系旋转</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家3 -->
+                <div class="scientist-card" style="background: rgba(255, 255, 255, 0.1); border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #ffffff, #a0a0a0); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🌌
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #ffffff; margin-bottom: 10px; font-size: 1.3em;">扬·奥尔特</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>银河系暗物质</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">对银河系动力学的研究，揭示了银河系中存在大量不可见物质的存在，为暗物质理论提供重要证据。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">银河系</span>
+                            <span style="background: rgba(255, 255, 255, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #ffffff;">天文学</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- 用户交互区域 -->
+        <div class="user-interaction-section">
+            <h2 class="section-title" style="text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);">互动空间</h2>
+            <div class="interaction-tabs">
+                <button class="tab-btn active" data-tab="images" style="font-size: 1.2em; padding: 12px 25px;">📷 分享内容</button>
+                <button class="tab-btn" data-tab="comments" style="font-size: 1.2em; padding: 12px 25px;">💬 评论交流</button>
+                <button class="tab-btn" data-tab="footprints" style="font-size: 1.2em; padding: 12px 25px;">👣 访问足迹</button>
+            </div>
+
+            <!-- 图片和视频分享标签页 -->
+            <div class="tab-content active" id="images-tab">
+                <div class="upload-area" style="background: rgba(0, 255, 255, 0.1); border: 3px solid rgba(0, 255, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);">
+                    <p style="color: #00ffff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);">✨ 欢迎留下你自己觉得你喜欢的视频和图片！</p>
+                    <p style="color: #a0ffff; margin-bottom: 25px; font-size: 1.2em;">💫 视频时长控制在15秒内，分享你的科幻灵感！</p>
+                    
+                    <input type="text" id="image-description" class="image-description-input" placeholder="描述你的视频或图片（可选）" style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(0, 255, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #00ffff; font-size: 1.1em;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <button class="upload-btn" id="upload-image-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">📤 上传图片</button>
+                        <button class="upload-btn" id="upload-video-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">🎬 上传视频</button>
+                    </div>
+                </div>
+                <div class="user-images-container" id="user-images-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 评论交流标签页 -->
+            <div class="tab-content" id="comments-tab">
+                <div class="comment-input-area" style="background: rgba(255, 0, 255, 0.1); border: 3px solid rgba(255, 0, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);">
+                    <p style="color: #ff00ff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);">💬 分享你的看法和见解</p>
+                    <textarea id="comment-input" class="comment-textarea" placeholder="写下你的评论..." style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(255, 0, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #ff00ff; font-size: 1.1em; min-height: 120px;"></textarea>
+                    <button class="comment-submit-btn" id="submit-comment-btn" style="width: 100%; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">💬 发表评论</button>
+                </div>
+                <div class="comments-container" id="user-comments-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 访问足迹标签页 -->
+            <div class="tab-content" id="footprints-tab">
+                <div class="footprints-container" id="user-footprints-container" style="background: rgba(255, 255, 0, 0.1); border: 3px solid rgba(255, 255, 0, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);"></div>
+            </div>
+        </div>
+<div class="content-section">
+            <h2 class="section-title">相关图片</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=300&fit=crop" alt="暗物质" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">暗物质分布</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&h=300&fit=crop" alt="星系团" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星系团</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=300&fit=crop" alt="宇宙" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">宇宙深处</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" alt="宇宙探索" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">宇宙探索</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=400&h=300&fit=crop" alt="星空" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星空</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&h=300&fit=crop" alt="星系" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星系</div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .scientist-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(255, 255, 255, 0.8);
+                box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+            }
+        </style>
+    </div>
+
+    <script src="user-interaction.js"></script>
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加active类到当前按钮和对应内容
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>曲速引擎 - 科技空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        .page-title {
+            font-size: 3em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #4facfe, #00f2fe, #4facfe);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(79, 172, 254, 0.5);
+            padding: 20px;
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(79, 172, 254, 0.2);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #4facfe;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(79, 172, 254, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-content {
+            line-height: 1.8;
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: rgba(79, 172, 254, 0.1);
+            border-left: 4px solid #4facfe;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tech-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(79, 172, 254, 0.08);
+            border: 2px solid rgba(79, 172, 254, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(79, 172, 254, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #00f2fe;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 用户交互区域样式 */
+        .user-interaction-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: rgba(79, 172, 254, 0.1);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 25px;
+            color: #4facfe;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(79, 172, 254, 0.3);
+            border-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            background: rgba(79, 172, 254, 0.05);
+            border: 2px dashed rgba(79, 172, 254, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(79, 172, 254, 0.8);
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        }
+
+        .image-description-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background: rgba(79, 172, 254, 0.1);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .image-description-input::placeholder {
+            color: #888;
+        }
+
+        .image-description-input:focus {
+            outline: none;
+            border-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .user-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-image-card {
+            background: rgba(79, 172, 254, 0.1);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-image-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.4);
+        }
+
+        .user-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-description {
+            color: #4facfe;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .image-meta {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .comment-input-area {
+            background: rgba(79, 172, 254, 0.05);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: rgba(79, 172, 254, 0.1);
+            border: 2px solid rgba(79, 172, 254, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .comment-textarea::placeholder {
+            color: #888;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: rgba(79, 172, 254, 0.8);
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .comment-submit-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .comment-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(79, 172, 254, 0.6);
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: rgba(79, 172, 254, 0.08);
+            border: 2px solid rgba(79, 172, 254, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: rgba(79, 172, 254, 0.6);
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(79, 172, 254, 0.2);
+        }
+
+        .comment-author {
+            color: #4facfe;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .footprints-container {
+            margin-top: 20px;
+        }
+
+        .footprint-item {
+            background: rgba(79, 172, 254, 0.05);
+            border: 2px solid rgba(79, 172, 254, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footprint-item:hover {
+            border-color: rgba(79, 172, 254, 0.6);
+            background: rgba(79, 172, 254, 0.1);
+        }
+
+        .footprint-action {
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .footprint-user {
+            color: #e0e0e0;
+        }
+
+        .footprint-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .interaction-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+
+        <h1 class="page-title">🚀 曲速引擎</h1>
+
+        <div class="content-section">
+            <h2 class="section-title">什么是曲速引擎？</h2>
+            <div class="section-content">
+                <p>曲速引擎（Warp Drive），又称阿尔库别雷引擎（Alcubierre Drive），是一种理论上可行的超光速推进系统。它通过扭曲时空结构来实现表观上的超光速，在定域上并不违反相对论。</p>
+
+                <div class="highlight-box">
+                    <strong>核心原理：</strong>阿尔库别瑞引擎通过在飞船周围形成"曲速泡"，压缩飞船前方的空间并膨胀后方的空间，使飞船在时空中"冲浪"，实现超光速旅行而不超过光速限制。
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">工作原理</h2>
+            <div class="section-content">
+                <p><strong>1. 空间扭曲</strong></p>
+                <p>引擎以两种方式扭曲空间——收缩飞船前的空间并膨胀其后的空间。这种扭曲形成了一个"曲速泡"，飞船位于泡中心的平坦时空区域内。</p>
+
+                <p><strong>2. 负能量需求</strong></p>
+                <p>实现空间扭曲需要负能量密度，这是一种极其罕见的物质形态。理论上需要相当于木星质量的负能量，但最新研究可能将需求降低到几百公斤。</p>
+
+                <p><strong>3. 定域超光速</strong></p>
+                <p>曲速泡本身可以以超光速移动，但飞船在泡内部相对于泡是静止的。这避免了相对论中的时间膨胀效应，飞船内的时间流逝与外界同步。</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">理论挑战</h2>
+            <div class="section-content">
+                <p>曲速引擎面临的重大挑战：</p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">⚡ <strong>负能量获取</strong>：需要产生和维持负能量密度</li>
+                    <li style="margin-bottom: 15px;">🌊 <strong>霍金辐射</strong>：曲速泡可能产生致命的辐射</li>
+                    <li style="margin-bottom: 15px;">🎯 <strong>导航控制</strong>：如何精确控制空间扭曲</li>
+                    <li style="margin-bottom: 15px;">🛡️ <strong>飞船保护</strong>：需要防护罩抵御星际物质</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">研究进展</h2>
+            <div class="section-content">
+                <p><strong>理论物理探索：</strong></p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">✅ 1994年：米格尔·阿尔库别雷首次提出曲速驱动理论</li>
+                    <li style="margin-bottom: 15px;">✅ 怀特与纳塔里奥等科学家提出改进的曲速驱动模型</li>
+                    <li style="margin-bottom: 15px;">✅ 最新研究大幅降低了负能量需求量级</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">理论参数</h2>
+            <div class="tech-stats">
+                <div class="stat-card">
+                    <div class="stat-number">1994</div>
+                    <div class="stat-label">理论提出年份</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">200%</div>
+                    <div class="stat-label">光速潜力</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3+</div>
+                    <div class="stat-label">曲速模型</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">?</div>
+                    <div class="stat-label">实现时间</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">著名人物</h2>
+            <div class="scientists-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 25px;">
+                <!-- 科学家1 -->
+                <div class="scientist-card" style="background: rgba(79, 172, 254, 0.1); border: 2px solid rgba(79, 172, 254, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🚀
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #4facfe; margin-bottom: 10px; font-size: 1.3em;">米格尔·阿尔库别雷</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>曲速引擎理论提出者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1994年基于《星际迷航》中的曲速引擎概念，提出了一种通过压缩前方空间、膨胀后方空间来实现超光速的理论模型。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">理论物理</span>
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">相对论</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家2 -->
+                <div class="scientist-card" style="background: rgba(79, 172, 254, 0.1); border: 2px solid rgba(79, 172, 254, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🎬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #4facfe; margin-bottom: 10px; font-size: 1.3em;">基普·索恩</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>时空理论权威</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">对曲速引擎、虫洞等时空理论进行深入研究。电影《星际穿越》科学顾问，将复杂的物理理论带入大众视野。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">广义相对论</span>
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">诺贝尔奖</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家3 -->
+                <div class="scientist-card" style="background: rgba(79, 172, 254, 0.1); border: 2px solid rgba(79, 172, 254, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #4facfe, #00f2fe); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🔬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #4facfe; margin-bottom: 10px; font-size: 1.3em;">哈罗德·怀特</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>NASA曲速研究负责人</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">NASA约翰逊航天中心的先进推进研究负责人，提出改进的曲速驱动模型，大幅降低了负能量需求量级。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">NASA</span>
+                            <span style="background: rgba(79, 172, 254, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #4facfe;">推进系统</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+                <!-- 用户交互区域 -->
+        <div class="user-interaction-section">
+            <h2 class="section-title" style="text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);">互动空间</h2>
+            <div class="interaction-tabs">
+                <button class="tab-btn active" data-tab="images" style="font-size: 1.2em; padding: 12px 25px;">📷 分享内容</button>
+                <button class="tab-btn" data-tab="comments" style="font-size: 1.2em; padding: 12px 25px;">💬 评论交流</button>
+                <button class="tab-btn" data-tab="footprints" style="font-size: 1.2em; padding: 12px 25px;">👣 访问足迹</button>
+            </div>
+
+            <!-- 图片和视频分享标签页 -->
+            <div class="tab-content active" id="images-tab">
+                <div class="upload-area" style="background: rgba(0, 255, 255, 0.1); border: 3px solid rgba(0, 255, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);">
+                    <p style="color: #00ffff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);">✨ 欢迎留下你自己觉得你喜欢的视频和图片！</p>
+                    <p style="color: #a0ffff; margin-bottom: 25px; font-size: 1.2em;">💫 视频时长控制在15秒内，分享你的科幻灵感！</p>
+                    
+                    <input type="text" id="image-description" class="image-description-input" placeholder="描述你的视频或图片（可选）" style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(0, 255, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #00ffff; font-size: 1.1em;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <button class="upload-btn" id="upload-image-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">📤 上传图片</button>
+                        <button class="upload-btn" id="upload-video-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">🎬 上传视频</button>
+                    </div>
+                </div>
+                <div class="user-images-container" id="user-images-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 评论交流标签页 -->
+            <div class="tab-content" id="comments-tab">
+                <div class="comment-input-area" style="background: rgba(255, 0, 255, 0.1); border: 3px solid rgba(255, 0, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);">
+                    <p style="color: #ff00ff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);">💬 分享你的看法和见解</p>
+                    <textarea id="comment-input" class="comment-textarea" placeholder="写下你的评论..." style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(255, 0, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #ff00ff; font-size: 1.1em; min-height: 120px;"></textarea>
+                    <button class="comment-submit-btn" id="submit-comment-btn" style="width: 100%; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">💬 发表评论</button>
+                </div>
+                <div class="comments-container" id="user-comments-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 访问足迹标签页 -->
+            <div class="tab-content" id="footprints-tab">
+                <div class="footprints-container" id="user-footprints-container" style="background: rgba(255, 255, 0, 0.1); border: 3px solid rgba(255, 255, 0, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);"></div>
+            </div>
+        </div>
+<div class="content-section">
+            <h2 class="section-title">相关图片</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&h=300&fit=crop" alt="曲速" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">曲速引擎示意图</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1517976487492-5750f3195933?w=400&h=300&fit=crop" alt="空间扭曲" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">空间扭曲效应</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" alt="星际旅行" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星际旅行</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=400&h=300&fit=crop" alt="宇宙飞船" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">未来飞船</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=300&fit=crop" alt="超光速" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">超光速理论</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=300&fit=crop" alt="时空连续体" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">时空连续体</div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .scientist-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(79, 172, 254, 0.8);
+                box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+            }
+        </style>
+    </div>
+
+    <script src="user-interaction.js"></script>
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加active类到当前按钮和对应内容
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

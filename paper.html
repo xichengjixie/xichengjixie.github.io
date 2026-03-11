@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文区 - 科技空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        .page-title {
+            font-size: 3em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #4ecdc4, #44a08d, #4ecdc4);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(78, 205, 196, 0.5);
+            padding: 20px;
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(78, 205, 196, 0.2);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #4ecdc4;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(78, 205, 196, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-content {
+            line-height: 1.8;
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: rgba(78, 205, 196, 0.1);
+            border-left: 4px solid #4ecdc4;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tech-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(78, 205, 196, 0.08);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(78, 205, 196, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #44a08d;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 用户交互区域样式 */
+        .user-interaction-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 25px;
+            color: #4ecdc4;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(78, 205, 196, 0.3);
+            border-color: rgba(78, 205, 196, 0.8);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            background: rgba(78, 205, 196, 0.05);
+            border: 2px dashed rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(78, 205, 196, 0.8);
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.6);
+        }
+
+        .image-description-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .image-description-input::placeholder {
+            color: #888;
+        }
+
+        .image-description-input:focus {
+            outline: none;
+            border-color: rgba(78, 205, 196, 0.8);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .user-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-image-card {
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-image-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(78, 205, 196, 0.8);
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.4);
+        }
+
+        .user-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-description {
+            color: #4ecdc4;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .image-meta {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .comment-input-area {
+            background: rgba(78, 205, 196, 0.05);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: rgba(78, 205, 196, 0.1);
+            border: 2px solid rgba(78, 205, 196, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .comment-textarea::placeholder {
+            color: #888;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: rgba(78, 205, 196, 0.8);
+            box-shadow: 0 0 15px rgba(78, 205, 196, 0.3);
+        }
+
+        .comment-submit-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(78, 205, 196, 0.3);
+        }
+
+        .comment-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(78, 205, 196, 0.6);
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: rgba(78, 205, 196, 0.08);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: rgba(78, 205, 196, 0.6);
+            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(78, 205, 196, 0.2);
+        }
+
+        .comment-author {
+            color: #4ecdc4;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .footprints-container {
+            margin-top: 20px;
+        }
+
+        .footprint-item {
+            background: rgba(78, 205, 196, 0.05);
+            border: 2px solid rgba(78, 205, 196, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footprint-item:hover {
+            border-color: rgba(78, 205, 196, 0.6);
+            background: rgba(78, 205, 196, 0.1);
+        }
+
+        .footprint-action {
+            color: #4ecdc4;
+            font-weight: 600;
+        }
+
+        .footprint-user {
+            color: #e0e0e0;
+        }
+
+        .footprint-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .interaction-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+
+        <h1 class="page-title">📚 论文区</h1>
+
+        <div class="content-section">
+            <h2 class="section-title">学术论文的重要性</h2>
+            <div class="section-content">
+                <p>学术论文是科学研究成果的重要载体，是推动科技进步和人类文明发展的核心动力。通过学术论文，研究者可以分享新发现、新理论和新方法，促进学术交流和技术创新。</p>
+
+                <div class="highlight-box">
+                    <strong>学术价值：</strong>顶级期刊和会议的论文代表了各领域最前沿的研究成果，是衡量科研水平和创新能力的重要指标。AI、量子计算、生物技术等领域的突破性论文正在改变世界。
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">核心研究方向</h2>
+            <div class="section-content">
+                <p><strong>1. 人工智能与大模型</strong></p>
+                <p>Transformer架构的提出（2017年《Attention Is All You Need》）是深度学习时代的里程碑，推动了GPT、BERT等大语言模型的诞生，重新定义了自然语言处理领域。</p>
+
+                <p><strong>2. 量子科学与技术</strong></p>
+                <p>量子纠缠、量子通信、量子计算等领域的论文正在引领新一轮科技革命。中国科学家在量子通信和量子计算领域发表了大量高水平论文。</p>
+
+                <p><strong>3. 生物技术与基因工程</strong></p>
+                <p>CRISPR基因编辑技术的发现和应用是21世纪最重要的生物技术突破之一，相关论文为遗传病治疗和农业改良提供了理论基础。</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">顶级期刊与会议</h2>
+            <div class="section-content">
+                <p>各领域的顶级学术平台：</p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">🏆 <strong>Nature / Science</strong>：综合性顶级期刊，涵盖所有学科</li>
+                    <li style="margin-bottom: 15px;">🧠 <strong>NeurIPS / ICML</strong>：人工智能和机器学习顶级会议</li>
+                    <li style="margin-bottom: 15px;">⚛️ <strong>Physical Review Letters</strong>：物理学顶级期刊</li>
+                    <li style="margin-bottom: 15px;">🧬 <strong>Cell / Nature Genetics</strong>：生物学顶级期刊</li>
+                    <li style="margin-bottom: 15px;">💻 <strong>CVPR / ICCV</strong>：计算机视觉顶级会议</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">研究热点</h2>
+            <div class="section-content">
+                <p><strong>2024-2025年研究焦点：</strong></p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">✅ 大模型效率优化与可解释性研究</li>
+                    <li style="margin-bottom: 15px;">✅ 量子计算实用化与纠错技术</li>
+                    <li style="margin-bottom: 15px;">✅ 基因编辑安全性与伦理研究</li>
+                    <li style="margin-bottom: 15px;">✅ 暗物质探测与宇宙起源研究</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">学术统计</h2>
+            <div class="tech-stats">
+                <div class="stat-card">
+                    <div class="stat-number">200万+</div>
+                    <div class="stat-label">年度论文发表量</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50+</div>
+                    <div class="stat-label">顶级期刊</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10万+</div>
+                    <div class="stat-label">引用率</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">研究领域</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户交互区域 -->
+        <div class="user-interaction-section">
+            <h2 class="section-title" style="text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);">互动空间</h2>
+            <div class="interaction-tabs">
+                <button class="tab-btn active" data-tab="images" style="font-size: 1.2em; padding: 12px 25px;">📷 分享内容</button>
+                <button class="tab-btn" data-tab="comments" style="font-size: 1.2em; padding: 12px 25px;">💬 评论交流</button>
+                <button class="tab-btn" data-tab="footprints" style="font-size: 1.2em; padding: 12px 25px;">👣 访问足迹</button>
+            </div>
+
+            <!-- 图片和视频分享标签页 -->
+            <div class="tab-content active" id="images-tab">
+                <div class="upload-area" style="background: rgba(0, 255, 255, 0.1); border: 3px solid rgba(0, 255, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);">
+                    <p style="color: #00ffff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);">✨ 欢迎留下你自己觉得你喜欢的视频和图片！</p>
+                    <p style="color: #a0ffff; margin-bottom: 25px; font-size: 1.2em;">💫 视频时长控制在15秒内，分享你的科幻灵感！</p>
+                    
+                    <input type="text" id="image-description" class="image-description-input" placeholder="描述你的视频或图片（可选）" style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(0, 255, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #00ffff; font-size: 1.1em;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <button class="upload-btn" id="upload-image-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">📤 上传图片</button>
+                        <button class="upload-btn" id="upload-video-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">🎬 上传视频</button>
+                    </div>
+                </div>
+                <div class="user-images-container" id="user-images-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 评论交流标签页 -->
+            <div class="tab-content" id="comments-tab">
+                <div class="comment-input-area" style="background: rgba(255, 0, 255, 0.1); border: 3px solid rgba(255, 0, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);">
+                    <p style="color: #ff00ff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);">💬 分享你对学术论文的看法和见解</p>
+                    <textarea id="comment-input" class="comment-textarea" placeholder="写下你的评论..." style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(255, 0, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #ff00ff; font-size: 1.1em; min-height: 120px;"></textarea>
+                    <button class="comment-submit-btn" id="submit-comment-btn" style="width: 100%; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">💬 发表评论</button>
+                </div>
+                <div class="comments-container" id="user-comments-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 访问足迹标签页 -->
+            <div class="tab-content" id="footprints-tab">
+                <div class="footprints-container" id="user-footprints-container" style="background: rgba(255, 255, 0, 0.1); border: 3px solid rgba(255, 255, 0, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);"></div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">相关图片</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" alt="科幻飞船" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">科幻飞船内部</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1535378437373-b4dede2c791e?w=400&h=300&fit=crop" alt="AI交互" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">人与AI交互</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1518770660433-463719e835bd?w=400&h=300&fit=crop" alt="未来科技" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">未来科技研究</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="user-interaction.js"></script>
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加active类到当前按钮和对应内容
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>

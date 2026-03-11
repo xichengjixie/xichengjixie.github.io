@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>虫洞探索 - 科技空间</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 30px;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            color: #000;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+
+        .back-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+        }
+
+        .page-title {
+            font-size: 3em;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(90deg, #f093fb, #f5576c, #f093fb);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+            text-shadow: 0 0 30px rgba(240, 147, 251, 0.5);
+            padding: 20px;
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 0 40px rgba(240, 147, 251, 0.2);
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .content-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #f093fb;
+            margin-bottom: 20px;
+            border-bottom: 2px solid rgba(240, 147, 251, 0.3);
+            padding-bottom: 10px;
+        }
+
+        .section-content {
+            line-height: 1.8;
+            color: #a0a0a0;
+            font-size: 1.1em;
+        }
+
+        .highlight-box {
+            background: rgba(240, 147, 251, 0.1);
+            border-left: 4px solid #f093fb;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+
+        .tech-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .stat-card {
+            background: rgba(240, 147, 251, 0.08);
+            border: 2px solid rgba(240, 147, 251, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            border-color: rgba(240, 147, 251, 0.8);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 900;
+            color: #f5576c;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 用户交互区域样式 */
+        .user-interaction-section {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .interaction-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 25px;
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 25px;
+            color: #f093fb;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: rgba(240, 147, 251, 0.3);
+            border-color: rgba(240, 147, 251, 0.8);
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .upload-area {
+            background: rgba(240, 147, 251, 0.05);
+            border: 2px dashed rgba(240, 147, 251, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .upload-area:hover {
+            border-color: rgba(240, 147, 251, 0.8);
+            background: rgba(240, 147, 251, 0.1);
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(240, 147, 251, 0.6);
+        }
+
+        .image-description-input {
+            width: 100%;
+            max-width: 500px;
+            padding: 12px 20px;
+            margin: 15px 0;
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+        }
+
+        .image-description-input::placeholder {
+            color: #888;
+        }
+
+        .image-description-input:focus {
+            outline: none;
+            border-color: rgba(240, 147, 251, 0.8);
+            box-shadow: 0 0 15px rgba(240, 147, 251, 0.3);
+        }
+
+        .user-images-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-image-card {
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 15px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .user-image-card:hover {
+            transform: scale(1.02);
+            border-color: rgba(240, 147, 251, 0.8);
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.4);
+        }
+
+        .user-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .image-info {
+            padding: 15px;
+        }
+
+        .image-description {
+            color: #f093fb;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .image-meta {
+            color: #888;
+            font-size: 0.85em;
+        }
+
+        .comment-input-area {
+            background: rgba(240, 147, 251, 0.05);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .comment-textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            background: rgba(240, 147, 251, 0.1);
+            border: 2px solid rgba(240, 147, 251, 0.3);
+            border-radius: 10px;
+            color: #e0e0e0;
+            font-size: 1em;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .comment-textarea::placeholder {
+            color: #888;
+        }
+
+        .comment-textarea:focus {
+            outline: none;
+            border-color: rgba(240, 147, 251, 0.8);
+            box-shadow: 0 0 15px rgba(240, 147, 251, 0.3);
+        }
+
+        .comment-submit-btn {
+            margin-top: 15px;
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            color: #000;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(240, 147, 251, 0.3);
+        }
+
+        .comment-submit-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(240, 147, 251, 0.6);
+        }
+
+        .comments-container {
+            margin-top: 20px;
+        }
+
+        .comment-card {
+            background: rgba(240, 147, 251, 0.08);
+            border: 2px solid rgba(240, 147, 251, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: rgba(240, 147, 251, 0.6);
+            box-shadow: 0 5px 15px rgba(240, 147, 251, 0.2);
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(240, 147, 251, 0.2);
+        }
+
+        .comment-author {
+            color: #f093fb;
+            font-weight: 700;
+            font-size: 1.1em;
+        }
+
+        .comment-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .comment-content {
+            color: #e0e0e0;
+            line-height: 1.6;
+        }
+
+        .footprints-container {
+            margin-top: 20px;
+        }
+
+        .footprint-item {
+            background: rgba(240, 147, 251, 0.05);
+            border: 2px solid rgba(240, 147, 251, 0.2);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .footprint-item:hover {
+            border-color: rgba(240, 147, 251, 0.6);
+            background: rgba(240, 147, 251, 0.1);
+        }
+
+        .footprint-action {
+            color: #f093fb;
+            font-weight: 600;
+        }
+
+        .footprint-user {
+            color: #e0e0e0;
+        }
+
+        .footprint-time {
+            color: #888;
+            font-size: 0.9em;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #888;
+            font-size: 1.1em;
+            padding: 30px;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .interaction-tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-btn">← 返回首页</a>
+
+        <h1 class="page-title">🌀 虫洞探索</h1>
+
+        <div class="content-section">
+            <h2 class="section-title">什么是虫洞？</h2>
+            <div class="section-content">
+                <p>虫洞（Wormhole），又称爱因斯坦-罗森桥（Einstein-Rosen bridge），是一种连接时空中不同点的理论结构，它基于爱因斯坦场方程的特殊解。虫洞理论为超光速旅行和时间旅行提供了理论可能性。</p>
+
+                <div class="highlight-box">
+                    <strong>理论起源：</strong>奥地利物理学家路德维希·弗莱姆于1916年首次提出虫洞理论。1935年，爱因斯坦和物理学家内森·罗森完善了这一概念，构想了一个连接两个黑洞的"桥梁"结构。
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">虫洞的物理原理</h2>
+            <div class="section-content">
+                <p><strong>1. 爱因斯坦-罗森桥</strong></p>
+                <p>根据广义相对论，时空可以纠缠得如此紧密，以至于两个点可以共享同一物理位置。虫洞在时空中起到一面"镜子"的作用，连接时空中的两个不同点，理论上可以实现瞬时旅行。</p>
+
+                <p><strong>2. 时空折叠</strong></p>
+                <p>虫洞通过折叠时空来实现超远距离的快速穿越。就像将一张纸的两端折叠在一起，虫洞在两个遥远的时空点之间创建了一条捷径。</p>
+
+                <p><strong>3. 奇异物质</strong></p>
+                <p>维持虫洞稳定需要"奇异物质"（exotic matter），这是一种具有负能量密度的物质，目前仅在理论中存在。负能量可以对抗引力，防止虫洞坍塌。</p>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">理论挑战</h2>
+            <div class="section-content">
+                <p>虫洞理论面临的重大挑战：</p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">🔬 <strong>物质需求</strong>：需要大量负能量物质，目前未被发现</li>
+                    <li style="margin-bottom: 15px;">⏰ <strong>稳定性问题</strong>：虫洞极不稳定，容易坍塌</li>
+                    <li style="margin-bottom: 15px;">🌡️ <strong>极端环境</strong>：引力强度可能摧毁任何物质</li>
+                    <li style="margin-bottom: 15px;">🔮 <strong>时间悖论</strong>：可能引发时间旅行悖论</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">研究进展</h2>
+            <div class="section-content">
+                <p><strong>理论物理探索：</strong></p>
+
+                <ul style="list-style: none; padding-left: 0;">
+                    <li style="margin-bottom: 15px;">✅ 数学研究证实了虫洞时空旅行在理论上的可能性</li>
+                    <li style="margin-bottom: 15px;">✅ 弦理论提出了在更高维度中可能存在多种暗物质粒子</li>
+                    <li style="margin-bottom: 15px;">✅ 量子场论在弯曲时空中的行为研究取得进展</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">理论参数</h2>
+            <div class="tech-stats">
+                <div class="stat-card">
+                    <div class="stat-number">1916</div>
+                    <div class="stat-label">首次提出年份</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">1935</div>
+                    <div class="stat-label">爱因斯坦-罗森完善</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">10维</div>
+                    <div class="stat-label">弦理论维度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">?</div>
+                    <div class="stat-label">实现可能性</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">著名人物</h2>
+            <div class="scientists-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-top: 25px;">
+                <!-- 科学家1 -->
+                <div class="scientist-card" style="background: rgba(240, 147, 251, 0.1); border: 2px solid rgba(240, 147, 251, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🌀
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #f093fb; margin-bottom: 10px; font-size: 1.3em;">阿尔伯特·爱因斯坦</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>广义相对论创立者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1935年与内森·罗森合作提出了连接两个黑洞的时空通道概念，即"爱因斯坦-罗森桥"理论。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">广义相对论</span>
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">诺贝尔奖</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家2 -->
+                <div class="scientist-card" style="background: rgba(240, 147, 251, 0.1); border: 2px solid rgba(240, 147, 251, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🌉
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #f093fb; margin-bottom: 10px; font-size: 1.3em;">内森·罗森</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>爱因斯坦-罗森桥合作者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">1935年与爱因斯坦共同提出了虫洞理论的基础模型，开创了时空隧道研究的先河。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">虫洞理论</span>
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">相对论</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家3 -->
+                <div class="scientist-card" style="background: rgba(240, 147, 251, 0.1); border: 2px solid rgba(240, 147, 251, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🎬
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #f093fb; margin-bottom: 10px; font-size: 1.3em;">基普·索恩</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>虫洞理论先驱</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">最早严肃对待虫洞可能性的科学家之一，对虫洞作为时间旅行工具进行了深入研究。电影《星际穿越》科学顾问。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">理论物理</span>
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">时间旅行</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科学家4 -->
+                <div class="scientist-card" style="background: rgba(240, 147, 251, 0.1); border: 2px solid rgba(240, 147, 251, 0.3); border-radius: 15px; overflow: hidden; transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #f093fb, #f5576c); display: flex; align-items: center; justify-content: center; font-size: 4em;">
+                        🐛
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="color: #f093fb; margin-bottom: 10px; font-size: 1.3em;">约翰·惠勒</h3>
+                        <p style="color: #a0a0a0; font-size: 0.95em; line-height: 1.6;"><strong>"虫洞"术语创造者</strong></p>
+                        <p style="color: #888; font-size: 0.9em; margin-top: 10px;">20世纪60年代，在研究"爱因斯坦-罗森桥"的数学模型时创造了"虫洞"（wormhole）这一术语，让这一概念广为流传。</p>
+                        <div style="margin-top: 15px;">
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">术语创造</span>
+                            <span style="background: rgba(240, 147, 251, 0.2); padding: 5px 12px; border-radius: 15px; font-size: 0.8em; color: #f093fb;">黑洞理论</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 用户交互区域 -->
+        <div class="user-interaction-section">
+            <h2 class="section-title" style="text-shadow: 0 0 15px rgba(0, 255, 255, 0.8);">互动空间</h2>
+            <div class="interaction-tabs">
+                <button class="tab-btn active" data-tab="images" style="font-size: 1.2em; padding: 12px 25px;">📷 分享内容</button>
+                <button class="tab-btn" data-tab="comments" style="font-size: 1.2em; padding: 12px 25px;">💬 评论交流</button>
+                <button class="tab-btn" data-tab="footprints" style="font-size: 1.2em; padding: 12px 25px;">👣 访问足迹</button>
+            </div>
+
+            <!-- 图片和视频分享标签页 -->
+            <div class="tab-content active" id="images-tab">
+                <div class="upload-area" style="background: rgba(0, 255, 255, 0.1); border: 3px solid rgba(0, 255, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 30px rgba(0, 255, 255, 0.1);">
+                    <p style="color: #00ffff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(0, 255, 255, 0.8);">✨ 欢迎留下你自己觉得你喜欢的视频和图片！</p>
+                    <p style="color: #a0ffff; margin-bottom: 25px; font-size: 1.2em;">💫 视频时长控制在15秒内，分享你的科幻灵感！</p>
+                    
+                    <input type="text" id="image-description" class="image-description-input" placeholder="描述你的视频或图片（可选）" style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(0, 255, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #00ffff; font-size: 1.1em;">
+                    
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap;">
+                        <button class="upload-btn" id="upload-image-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">📤 上传图片</button>
+                        <button class="upload-btn" id="upload-video-btn" style="flex: 1; min-width: 200px; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">🎬 上传视频</button>
+                    </div>
+                </div>
+                <div class="user-images-container" id="user-images-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 评论交流标签页 -->
+            <div class="tab-content" id="comments-tab">
+                <div class="comment-input-area" style="background: rgba(255, 0, 255, 0.1); border: 3px solid rgba(255, 0, 255, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);">
+                    <p style="color: #ff00ff; margin-bottom: 20px; font-size: 1.5em; font-weight: 700; text-shadow: 0 0 10px rgba(255, 0, 255, 0.8);">💬 分享你对虫洞探索的看法和见解</p>
+                    <textarea id="comment-input" class="comment-textarea" placeholder="写下你的评论..." style="width: 100%; padding: 15px; margin-bottom: 20px; border: 2px solid rgba(255, 0, 255, 0.5); border-radius: 10px; background: rgba(0, 0, 0, 0.5); color: #ff00ff; font-size: 1.1em; min-height: 120px;"></textarea>
+                    <button class="comment-submit-btn" id="submit-comment-btn" style="width: 100%; padding: 18px 30px; font-size: 1.2em; font-weight: 700;">💬 发表评论</button>
+                </div>
+                <div class="comments-container" id="user-comments-container" style="margin-top: 30px;"></div>
+            </div>
+
+            <!-- 访问足迹标签页 -->
+            <div class="tab-content" id="footprints-tab">
+                <div class="footprints-container" id="user-footprints-container" style="background: rgba(255, 255, 0, 0.1); border: 3px solid rgba(255, 255, 0, 0.5); border-radius: 20px; padding: 30px; box-shadow: 0 0 20px rgba(255, 255, 0, 0.3);"></div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <h2 class="section-title">相关图片</h2>
+            <div class="image-grid">
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1462331940025-496dfbfc7564?w=400&h=300&fit=crop" alt="虫洞" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">虫洞示意图</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400&h=300&fit=crop" alt="时空弯曲" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">时空弯曲</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?w=400&h=300&fit=crop" alt="黑洞" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">黑洞与虫洞</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1506318137071-a8e063b4bec0?w=400&h=300&fit=crop" alt="星际穿越" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星际旅行</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=400&h=300&fit=crop" alt="宇宙" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">宇宙深处</div>
+                </div>
+                <div class="image-card">
+                    <img src="https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?w=400&h=300&fit=crop" alt="星系" style="width: 100%; height: 200px; object-fit: cover;">
+                    <div class="image-caption">星系穿越</div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .scientist-card:hover {
+                transform: translateY(-5px);
+                border-color: rgba(240, 147, 251, 0.8);
+                box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+            }
+        </style>
+    </div>
+
+    <script src="user-interaction.js"></script>
+    <script>
+        // 标签页切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // 移除所有active类
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+
+                    // 添加active类到当前按钮和对应内容
+                    this.classList.add('active');
+                    const tabId = this.dataset.tab + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+
+            const cards = document.querySelectorAll('.stat-card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
