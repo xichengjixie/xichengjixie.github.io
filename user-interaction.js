@@ -114,22 +114,22 @@ class UserInteraction {
 
     // 处理图片上传
     processImageUpload(file, description, resolve, reject) {
-        // 验证动态令牌
-        if (this.dynamicToken) {
-            const currentToken = this.dynamicToken.getCurrentToken();
-            // 在实际应用中，这里应该验证用户提交的令牌
-            // 为了演示，我们自动生成并验证签名
-            const signature = this.dynamicToken.signRequest('upload_image', { 
-                fileName: file.name,
-                fileSize: file.size 
-            });
-            
-            if (!this.dynamicToken.verifyRequest(signature, 'upload_image').valid) {
-                alert('安全验证失败，请刷新页面重试');
-                reject(new Error('令牌验证失败'));
-                return;
-            }
-        }
+        // 验证动态令牌（已禁用）
+        // if (this.dynamicToken) {
+        //     const currentToken = this.dynamicToken.getCurrentToken();
+        //     // 在实际应用中，这里应该验证用户提交的令牌
+        //     // 为了演示，我们自动生成并验证签名
+        //     const signature = this.dynamicToken.signRequest('upload_image', { 
+        //         fileName: file.name,
+        //         fileSize: file.size 
+        //     });
+        //     
+        //     if (!this.dynamicToken.verifyRequest(signature, 'upload_image').valid) {
+        //         alert('安全验证失败，请刷新页面重试');
+        //         reject(new Error('令牌验证失败'));
+        //         return;
+        //     }
+        // }
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -256,21 +256,21 @@ class UserInteraction {
 
     // 处理视频上传
     processVideoUpload(file, description, duration, resolve, reject) {
-        // 验证动态令牌
-        if (this.dynamicToken) {
-            const currentToken = this.dynamicToken.getCurrentToken();
-            const signature = this.dynamicToken.signRequest('upload_video', { 
-                fileName: file.name,
-                fileSize: file.size,
-                duration: duration
-            });
-            
-            if (!this.dynamicToken.verifyRequest(signature, 'upload_video').valid) {
-                alert('安全验证失败，请刷新页面重试');
-                reject(new Error('令牌验证失败'));
-                return;
-            }
-        }
+        // 验证动态令牌（已禁用）
+        // if (this.dynamicToken) {
+        //     const currentToken = this.dynamicToken.getCurrentToken();
+        //     const signature = this.dynamicToken.signRequest('upload_video', { 
+        //         fileName: file.name,
+        //         fileSize: file.size,
+        //         duration: duration
+        //     });
+        //     
+        //     if (!this.dynamicToken.verifyRequest(signature, 'upload_video').valid) {
+        //         alert('安全验证失败，请刷新页面重试');
+        //         reject(new Error('令牌验证失败'));
+        //         return;
+        //     }
+        // }
 
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -348,17 +348,17 @@ class UserInteraction {
             return null;
         }
 
-        // 验证动态令牌
-        if (this.dynamicToken) {
-            const signature = this.dynamicToken.signRequest('add_comment', { 
-                contentLength: content.length
-            });
-            
-            if (!this.dynamicToken.verifyRequest(signature, 'add_comment').valid) {
-                alert('安全验证失败，请刷新页面重试');
-                return null;
-            }
-        }
+        // 验证动态令牌（已禁用）
+        // if (this.dynamicToken) {
+        //     const signature = this.dynamicToken.signRequest('add_comment', { 
+        //         contentLength: content.length
+        //     });
+        //     
+        //     if (!this.dynamicToken.verifyRequest(signature, 'add_comment').valid) {
+        //         alert('安全验证失败，请刷新页面重试');
+        //         return null;
+        //     }
+        // }
 
         try {
             const comment = {
