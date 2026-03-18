@@ -238,6 +238,25 @@
             </div>
         </div>
 
+        <div class="stats-summary" id="visitor-stats-summary">
+            <div class="summary-card">
+                <div class="summary-value">0</div>
+                <div class="summary-label">总访客数</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">0</div>
+                <div class="summary-label">总浏览次数</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">-</div>
+                <div class="summary-label">首次访问</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value">-</div>
+                <div class="summary-label">最近访问</div>
+            </div>
+        </div>
+
         <div class="page-list" id="page-list">
             <div class="no-data">加载中...</div>
         </div>
@@ -273,8 +292,17 @@
             return JSON.parse(data);
         }
 
+        function getVisitorData() {
+            const data = localStorage.getItem('tech_space_visitor_data');
+            if (!data) {
+                return {};
+            }
+            return JSON.parse(data);
+        }
+
         function loadStats() {
             const data = getPageViewData();
+            const visitorData = getVisitorData();
             const pages = Object.keys(data);
 
             if (pages.length === 0) {
@@ -323,6 +351,29 @@
             document.getElementById('avg-views').textContent = Math.round(totalViews / pages.length);
             document.getElementById('top-page').textContent = topPage;
 
+            // 添加访客统计信息
+            const visitorStats = document.getElementById('visitor-stats-summary');
+            if (visitorStats) {
+                visitorStats.innerHTML = `
+                    <div class="summary-card">
+                        <div class="summary-value">${visitorData.totalVisitors || 0}</div>
+                        <div class="summary-label">总访客数</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">${visitorData.totalPageViews || 0}</div>
+                        <div class="summary-label">总浏览次数</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">${visitorData.firstVisit ? new Date(visitorData.firstVisit).toLocaleDateString() : '-'}</div>
+                        <div class="summary-label">首次访问</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="summary-value">${visitorData.lastVisit ? new Date(visitorData.lastVisit).toLocaleDateString() : '-'}</div>
+                        <div class="summary-label">最近访问</div>
+                    </div>
+                `;
+            }
+
             // 更新页面列表
             document.getElementById('page-list').innerHTML = pageListHTML;
         }
@@ -333,5 +384,7 @@
         // 每10秒自动刷新
         setInterval(loadStats, 10000);
     </script>
+    <!-- 访客追踪系统 -->
+    <script src="visitor-tracker.js"></script>
 </body>
 </html>
