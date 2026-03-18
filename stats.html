@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>浏览量统计 - 科技空间</title>
+
+    <!-- 安全配置：HSTS -->
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
+
+    <!-- 安全配置模块 -->
+    <script src="security-config.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Oxygen', sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a3e 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 20px;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 3em;
+            font-weight: 900;
+            letter-spacing: 5px;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00ffff, #00ff00, #00ffff);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #00ffff;
+            opacity: 0.8;
+        }
+
+        .stats-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .summary-card {
+            background: rgba(16, 24, 48, 0.8);
+            border: 2px solid rgba(0, 255, 255, 0.3);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .summary-card:hover {
+            border-color: rgba(0, 255, 255, 1);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 255, 255, 0.3);
+        }
+
+        .summary-value {
+            font-size: 3em;
+            font-weight: bold;
+            color: #00ffff;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-size: 1em;
+            color: #a0a0a0;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .page-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .page-card {
+            background: rgba(16, 24, 48, 0.6);
+            border: 1px solid rgba(0, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .page-card:hover {
+            border-color: rgba(0, 255, 255, 0.6);
+            transform: scale(1.02);
+        }
+
+        .page-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #00ffff;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-count {
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .page-info {
+            display: flex;
+            justify-content: space-between;
+            color: #a0a0a0;
+            font-size: 0.9em;
+        }
+
+        .page-link {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            color: #00ffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .page-link:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 1);
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0a0a0;
+            font-size: 1.2em;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 10px 30px;
+            background: linear-gradient(135deg, #00ffff, #00ff00);
+            border: none;
+            border-radius: 5px;
+            color: #0a0e27;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.4);
+        }
+
+        .refresh-btn {
+            margin-left: 10px;
+            padding: 8px 20px;
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 5px;
+            color: #00ffff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: rgba(0, 255, 255, 1);
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2em;
+            }
+
+            .stats-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">📊 浏览量统计</h1>
+            <p class="subtitle">科技空间 - 所有页面访问数据</p>
+            <button class="refresh-btn" onclick="loadStats()">🔄 刷新</button>
+        </div>
+
+        <div class="stats-summary" id="stats-summary">
+            <div class="summary-card">
+                <div class="summary-value" id="total-views">0</div>
+                <div class="summary-label">总浏览量</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="total-pages">0</div>
+                <div class="summary-label">页面数量</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="avg-views">0</div>
+                <div class="summary-label">平均浏览</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-value" id="top-page">-</div>
+                <div class="summary-label">最热页面</div>
+            </div>
+        </div>
+
+        <div class="page-list" id="page-list">
+            <div class="no-data">加载中...</div>
+        </div>
+
+        <div style="text-align: center;">
+            <a href="index.html" class="back-link">← 返回首页</a>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'tech_space_page_views';
+        const PAGE_NAMES = {
+            'home': '🏠 首页',
+            'video': '🎬 视频',
+            'image': '🖼️ 图片',
+            'paper': '📚 论文',
+            'discussion': '💬 讨论',
+            'quantum': '⚛️ 量子科技',
+            'wormhole': '🌀 虫洞探索',
+            'warp': '🚀 曲速引擎',
+            'ai': '🤖 人工智能',
+            'neural': '🧠 神经网络',
+            'genetic': '🧬 基因工程',
+            'nano': '🔬 纳米技术',
+            'darkmatter': '🌌 暗物质'
+        };
+
+        function getPageViewData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            if (!data) {
+                return {};
+            }
+            return JSON.parse(data);
+        }
+
+        function loadStats() {
+            const data = getPageViewData();
+            const pages = Object.keys(data);
+
+            if (pages.length === 0) {
+                document.getElementById('page-list').innerHTML = '<div class="no-data">暂无浏览数据</div>';
+                return;
+            }
+
+            // 计算统计数据
+            let totalViews = 0;
+            let maxViews = 0;
+            let topPage = '';
+
+            // 按浏览量排序
+            const sortedPages = pages.sort((a, b) => data[b].count - data[a].count);
+
+            // 创建页面列表
+            const pageListHTML = sortedPages.map(pageId => {
+                const pageData = data[pageId];
+                const pageName = PAGE_NAMES[pageId] || pageId;
+                const pageURL = pageId === 'home' ? 'index.html' : `${pageId}.html`;
+
+                totalViews += pageData.count;
+
+                if (pageData.count > maxViews) {
+                    maxViews = pageData.count;
+                    topPage = pageName;
+                }
+
+                return `
+                    <div class="page-card">
+                        <div class="page-name">
+                            <span>${pageName}</span>
+                            <span class="page-count">${pageData.count}</span>
+                        </div>
+                        <div class="page-info">
+                            <span>🕒 最后访问: ${new Date(pageData.lastVisit).toLocaleString()}</span>
+                        </div>
+                        <a href="${pageURL}" class="page-link">查看页面 →</a>
+                    </div>
+                `;
+            }).join('');
+
+            // 更新统计摘要
+            document.getElementById('total-views').textContent = totalViews;
+            document.getElementById('total-pages').textContent = pages.length;
+            document.getElementById('avg-views').textContent = Math.round(totalViews / pages.length);
+            document.getElementById('top-page').textContent = topPage;
+
+            // 更新页面列表
+            document.getElementById('page-list').innerHTML = pageListHTML;
+        }
+
+        // 页面加载时加载统计数据
+        document.addEventListener('DOMContentLoaded', loadStats);
+
+        // 每10秒自动刷新
+        setInterval(loadStats, 10000);
+    </script>
+</body>
+</html>
